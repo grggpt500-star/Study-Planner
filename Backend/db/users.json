@@ -1,0 +1,14 @@
+{
+  "krishna": {
+    "password": "$2a$10$DnSoFSuWmr5687rMDWiwue/QzLYPFrXbg592CEBFWRS91srZPPK0G",
+    "dailyHours": 4
+  },
+  "sunil": {
+    "password": "$2a$10$1Dt/op0PilYMXMluZ1LYheQ6uAznL4.X2.ikHa8smM87x56vrWBBq",
+    "dailyHours": 4
+  },
+  "sajal": {
+    "password": "$2a$10$fJ58wvkZOCVxIJoFBgHiWubvflL18PINSS5ewPqGBisi3Q4Lc5TZC",
+    "dailyHours": 4
+  }
+}

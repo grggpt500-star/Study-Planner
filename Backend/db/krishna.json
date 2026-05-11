@@ -1,0 +1,338 @@
+{
+  "subjects": [
+    {
+      "name": "ITS205",
+      "deadline": "2026-05-15",
+      "priority": "High",
+      "hours": "5"
+    },
+    {
+      "name": "MAT101",
+      "deadline": "2026-05-20",
+      "priority": "Medium",
+      "hours": "3"
+    },
+    {
+      "name": "BUS201",
+      "deadline": "2026-05-30",
+      "priority": "Low",
+      "hours": "2"
+    }
+  ],
+  "schedule": [
+    {
+      "id": "ITS205_2026-05-06_08:00",
+      "subject": "ITS205",
+      "date": "2026-05-06",
+      "time": "08:00",
+      "duration": 1,
+      "status": "missed"
+    },
+    {
+      "id": "ITS205_2026-05-06_09:00",
+      "subject": "ITS205",
+      "date": "2026-05-06",
+      "time": "09:00",
+      "duration": 1,
+      "status": "completed"
+    },
+    {
+      "id": "ITS205_2026-05-06_10:00",
+      "subject": "ITS205",
+      "date": "2026-05-06",
+      "time": "10:00",
+      "duration": 1,
+      "status": "completed"
+    },
+    {
+      "id": "ITS205_2026-05-06_11:00",
+      "subject": "ITS205",
+      "date": "2026-05-06",
+      "time": "11:00",
+      "duration": 1,
+      "status": "completed"
+    },
+    {
+      "id": "ITS205_2026-05-07_08:00",
+      "subject": "ITS205",
+      "date": "2026-05-07",
+      "time": "08:00",
+      "duration": 1,
+      "status": "missed"
+    },
+    {
+      "id": "ITS205_2026-05-07_09:00",
+      "subject": "ITS205",
+      "date": "2026-05-07",
+      "time": "09:00",
+      "duration": 1,
+      "status": "missed"
+    },
+    {
+      "id": "MAT101_2026-05-11_09:00",
+      "subject": "MAT101",
+      "date": "2026-05-11",
+      "time": "09:00",
+      "duration": 1,
+      "status": "completed"
+    },
+    {
+      "id": "MAT101_2026-05-12_08:00",
+      "subject": "MAT101",
+      "date": "2026-05-12",
+      "time": "08:00",
+      "duration": 1,
+      "status": "missed"
+    },
+    {
+      "id": "MAT101_2026-05-06_08:00",
+      "subject": "MAT101",
+      "date": "2026-05-06",
+      "time": "08:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-06_09:00",
+      "subject": "MAT101",
+      "date": "2026-05-06",
+      "time": "09:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-06_10:00",
+      "subject": "MAT101",
+      "date": "2026-05-06",
+      "time": "10:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-06_11:00",
+      "subject": "MAT101",
+      "date": "2026-05-06",
+      "time": "11:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-07_08:00",
+      "subject": "MAT101",
+      "date": "2026-05-07",
+      "time": "08:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-07_09:00",
+      "subject": "MAT101",
+      "date": "2026-05-07",
+      "time": "09:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-07_10:00",
+      "subject": "MAT101",
+      "date": "2026-05-07",
+      "time": "10:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-07_11:00",
+      "subject": "MAT101",
+      "date": "2026-05-07",
+      "time": "11:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-08_08:00",
+      "subject": "MAT101",
+      "date": "2026-05-08",
+      "time": "08:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-08_09:00",
+      "subject": "MAT101",
+      "date": "2026-05-08",
+      "time": "09:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-08_10:00",
+      "subject": "MAT101",
+      "date": "2026-05-08",
+      "time": "10:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-08_11:00",
+      "subject": "MAT101",
+      "date": "2026-05-08",
+      "time": "11:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-09_08:00",
+      "subject": "MAT101",
+      "date": "2026-05-09",
+      "time": "08:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-09_09:00",
+      "subject": "MAT101",
+      "date": "2026-05-09",
+      "time": "09:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-09_10:00",
+      "subject": "MAT101",
+      "date": "2026-05-09",
+      "time": "10:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-09_11:00",
+      "subject": "MAT101",
+      "date": "2026-05-09",
+      "time": "11:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-10_08:00",
+      "subject": "MAT101",
+      "date": "2026-05-10",
+      "time": "08:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-10_09:00",
+      "subject": "MAT101",
+      "date": "2026-05-10",
+      "time": "09:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-10_10:00",
+      "subject": "MAT101",
+      "date": "2026-05-10",
+      "time": "10:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "MAT101_2026-05-10_11:00",
+      "subject": "MAT101",
+      "date": "2026-05-10",
+      "time": "11:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "ITS205_2026-05-11_08:00",
+      "subject": "ITS205",
+      "date": "2026-05-11",
+      "time": "08:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "ITS205_2026-05-11_09:00",
+      "subject": "ITS205",
+      "date": "2026-05-11",
+      "time": "09:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "ITS205_2026-05-11_10:00",
+      "subject": "ITS205",
+      "date": "2026-05-11",
+      "time": "10:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "ITS205_2026-05-11_11:00",
+      "subject": "ITS205",
+      "date": "2026-05-11",
+      "time": "11:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "ITS205_2026-05-12_08:00",
+      "subject": "ITS205",
+      "date": "2026-05-12",
+      "time": "08:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "ITS205_2026-05-12_09:00",
+      "subject": "ITS205",
+      "date": "2026-05-12",
+      "time": "09:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "BUS201_2026-05-12_10:00",
+      "subject": "BUS201",
+      "date": "2026-05-12",
+      "time": "10:00",
+      "duration": 1,
+      "status": "scheduled"
+    },
+    {
+      "id": "BUS201_2026-05-12_11:00",
+      "subject": "BUS201",
+      "date": "2026-05-12",
+      "time": "11:00",
+      "duration": 1,
+      "status": "scheduled"
+    }
+  ],
+  "missed": [
+    {
+      "subject": "ITS205",
+      "time": "2026-05-06T03:44:56.422Z"
+    },
+    {
+      "subject": "ITS205",
+      "time": "2026-05-06T03:45:08.935Z"
+    },
+    {
+      "subject": "ITS205",
+      "time": "2026-05-06T03:46:48.586Z"
+    },
+    {
+      "subject": "ITS205",
+      "time": "2026-05-06T03:46:55.555Z"
+    },
+    {
+      "subject": "ITS205",
+      "time": "2026-05-06T03:47:23.645Z"
+    },
+    {
+      "subject": "MAT101",
+      "time": "2026-05-06T03:48:59.795Z"
+    }
+  ]
+}

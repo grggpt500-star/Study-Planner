@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Study Planner — Group 9</title>
+
+  <!-- React via CDN (no build tools needed) -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* ── Reset & Base ───────────────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1923;
+      color: #e8f0f7;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────── */
+    .app { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 210px; min-height: 100vh;
+      background: #192533;
+      display: flex; flex-direction: column;
+      padding: 24px 0; flex-shrink: 0;
+    }
+    .content { flex: 1; padding: 32px 36px; overflow-y: auto; }
+
+    /* ── Sidebar ─────────────────────────────────────────────── */
+    .sidebar-logo { text-align: center; padding: 0 16px 20px; }
+    .sidebar-logo .icon { font-size: 36px; }
+    .sidebar-logo .title { font-size: 15px; font-weight: 700; color: #e8f0f7; margin-top: 4px; }
+    .sidebar-logo .user  { font-size: 12px; color: #8fa8c0; margin-top: 2px; }
+    .sidebar-divider { height: 1px; background: #2a3f55; margin: 8px 16px 12px; }
+    .nav-btn {
+      display: block; width: 100%;
+      padding: 11px 24px; text-align: left;
+      background: none; border: none; cursor: pointer;
+      color: #b0c8e0; font-size: 14px; font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-btn:hover  { background: #1e2f40; color: #00b4d8; }
+    .nav-btn.active { background: #1e2f40; color: #00b4d8; font-weight: 600; }
+    .sidebar-bottom { margin-top: auto; padding: 16px; }
+    .logout-btn {
+      width: 100%; padding: 9px; background: #2a3f55;
+      border: none; border-radius: 6px; color: #b0c8e0;
+      cursor: pointer; font-size: 13px; font-family: inherit;
+    }
+    .logout-btn:hover { background: #e74c3c; color: white; }
+
+    /* ── Cards & Sections ────────────────────────────────────── */
+    .page-title  { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .page-sub    { font-size: 13px; color: #8fa8c0; margin-bottom: 24px; }
+    .card {
+      background: #1e2f40; border-radius: 10px;
+      border: 1px solid #2a3f55; padding: 20px; margin-bottom: 20px;
+    }
+    .card-title { font-size: 14px; font-weight: 700; color: #00b4d8; margin-bottom: 14px; }
+
+    /* ── Stats row ───────────────────────────────────────────── */
+    .stats-row { display: flex; gap: 14px; margin-bottom: 24px; }
+    .stat-card {
+      flex: 1; background: #1e2f40; border-radius: 10px;
+      border: 1px solid #2a3f55; padding: 18px; text-align: center;
+    }
+    .stat-val   { font-size: 30px; font-weight: 700; }
+    .stat-label { font-size: 12px; color: #8fa8c0; margin-top: 4px; }
+
+    /* ── Forms ───────────────────────────────────────────────── */
+    .form-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 8px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 12px; color: #8fa8c0; }
+    input, select {
+      background: #0f1923; border: 1px solid #2a3f55;
+      color: #e8f0f7; border-radius: 6px;
+      padding: 8px 12px; font-size: 14px; font-family: inherit;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: #00b4d8; }
+    input::placeholder { color: #4a6a85; }
+
+    /* ── Buttons ─────────────────────────────────────────────── */
+    .btn {
+      padding: 9px 18px; border: none; border-radius: 6px;
+      cursor: pointer; font-size: 13px; font-weight: 600;
+      font-family: inherit; transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary  { background: #00b4d8; color: #0f1923; }
+    .btn-success  { background: #2ecc71; color: #0f1923; }
+    .btn-danger   { background: #e74c3c; color: white; }
+    .btn-warning  { background: #f39c12; color: #0f1923; }
+    .btn-ghost    { background: #2a3f55; color: #b0c8e0; }
+    .btn-sm       { padding: 6px 12px; font-size: 12px; }
+
+    /* ── Table ───────────────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      background: #192533; color: #00b4d8; font-size: 12px;
+      text-align: left; padding: 10px 14px; font-weight: 600;
+    }
+    td { padding: 11px 14px; border-bottom: 1px solid #2a3f55; }
+    tr:hover td { background: #243549; }
+    tr.selected td { background: #1a3a50; }
+
+    /* ── Badges ──────────────────────────────────────────────── */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+    }
+    .badge-scheduled { background: #1a3a50; color: #00b4d8; }
+    .badge-completed  { background: #1a3a20; color: #2ecc71; }
+    .badge-missed     { background: #3a1a1a; color: #e74c3c; }
+
+    /* ── Notification banner ─────────────────────────────────── */
+    .notif {
+      padding: 12px 18px; border-radius: 8px; margin-bottom: 18px;
+      font-size: 13px; font-weight: 600; display: flex;
+      align-items: center; gap: 10px;
+    }
+    .notif-success { background: #1a3a20; color: #2ecc71; border: 1px solid #2ecc71; }
+    .notif-danger  { background: #3a1a1a; color: #e74c3c; border: 1px solid #e74c3c; }
+    .notif-info    { background: #1a2a3a; color: #00b4d8; border: 1px solid #00b4d8; }
+
+    /* ── Login page ──────────────────────────────────────────── */
+    .login-wrap {
+      min-height: 100vh; display: flex;
+      align-items: center; justify-content: center;
+      background: #0f1923;
+    }
+    .login-box {
+      background: #1e2f40; border: 1px solid #2a3f55;
+      border-radius: 14px; padding: 40px 36px; width: 380px;
+    }
+    .login-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+    .login-sub   { font-size: 12px; color: #8fa8c0; text-align: center; margin-bottom: 28px; }
+    .tab-row { display: flex; border-bottom: 1px solid #2a3f55; margin-bottom: 22px; }
+    .tab-btn {
+      flex: 1; padding: 10px; background: none; border: none;
+      color: #8fa8c0; cursor: pointer; font-size: 14px;
+      font-family: inherit; font-weight: 600;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .tab-btn.active { color: #00b4d8; border-bottom-color: #00b4d8; }
+    .login-field { margin-bottom: 14px; }
+    .login-field label { display: block; font-size: 12px; color: #8fa8c0; margin-bottom: 5px; }
+    .login-field input { width: 100%; }
+    .error-msg { color: #e74c3c; font-size: 12px; margin-bottom: 10px; min-height: 16px; }
+    .success-msg { color: #2ecc71; font-size: 12px; margin-bottom: 10px; }
+
+    /* ── Progress bars ───────────────────────────────────────── */
+    .progress-bar-outer {
+      height: 12px; background: #2a3f55;
+      border-radius: 6px; overflow: hidden; flex: 1;
+    }
+    .progress-bar-inner { height: 100%; border-radius: 6px; transition: width 0.4s; }
+
+    /* ── Deadline urgency colours ────────────────────────────── */
+    .urgent   { color: #e74c3c; }
+    .soon     { color: #f39c12; }
+    .ok       { color: #2ecc71; }
+
+    /* ── Colour dots for subjects ────────────────────────────── */
+    .dot {
+      display: inline-block; width: 10px; height: 10px;
+      border-radius: 50%; margin-right: 8px; flex-shrink: 0;
+    }
+
+    /* ── Empty state ─────────────────────────────────────────── */
+    .empty {
+      text-align: center; padding: 40px 20px;
+      color: #8fa8c0; font-size: 14px;
+    }
+    .empty-icon { font-size: 40px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ── API base URL ──────────────────────────────────────────────────
+const API = "http://localhost:5000/api";
+
+// ── Subject colours ───────────────────────────────────────────────
+const COLORS = ["#00b4d8","#f39c12","#2ecc71","#e74c3c","#9b59b6","#1abc9c","#f1c40f","#e67e22"];
+const colorMap = {};
+function subjectColor(name) {
+  if (!colorMap[name]) {
+    colorMap[name] = COLORS[Object.keys(colorMap).length % COLORS.length];
+  }
+  return colorMap[name];
+}
+
+// ── API helper ────────────────────────────────────────────────────
+async function api(path, method = "GET", body = null, token = null) {
+  const opts = {
+    method,
+    headers: { "Content-Type": "application/json" },
+  };
+  if (token) opts.headers["Authorization"] = `Bearer ${token}`;
+  if (body)  opts.body = JSON.stringify(body);
+  const res  = await fetch(API + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Request failed");
+  return data;
+}
+
+// ═════════════════════════════════════════════════════════════════
+// LOGIN / REGISTER PAGE
+// ═════════════════════════════════════════════════════════════════
+function LoginPage({ onLogin }) {
+  const [tab,     setTab]     = useState("login");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm,  setConfirm]  = useState("");
+  const [hours,    setHours]    = useState("4");
+  const [error,    setError]    = useState("");
+  const [success,  setSuccess]  = useState("");
+  const [loading,  setLoading]  = useState(false);
+
+  async function handleSubmit() {
+    setError(""); setSuccess("");
+    if (!username.trim() || !password) { setError("Please fill in all fields."); return; }
+    setLoading(true);
+    try {
+      if (tab === "login") {
+        // FR-02: Login with JWT
+        const data = await api("/login", "POST", { username, password });
+        onLogin(data.token, data.username);
+      } else {
+        if (password !== confirm) { setError("Passwords do not match."); setLoading(false); return; }
+        await api("/register", "POST", { username, password, dailyHours: parseFloat(hours) || 4 });
+        setSuccess("✓ Account created! You can now log in.");
+        setTab("login"); setPassword(""); setConfirm("");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+    setLoading(false);
+  }
+
+  return (
+    <div className="login-wrap">
+      <div className="login-box">
+        <div style={{textAlign:"center",fontSize:40,marginBottom:8}}>📚</div>
+        <div className="login-title">AI Study Planner</div>
+        <div className="login-sub">ITS205 Software Engineering — Group 9</div>
+
+        <div className="tab-row">
+          <button className={`tab-btn ${tab==="login"?"active":""}`} onClick={() => { setTab("login"); setError(""); setSuccess(""); }}>Login</button>
+          <button className={`tab-btn ${tab==="register"?"active":""}`} onClick={() => { setTab("register"); setError(""); setSuccess(""); }}>Register</button>
+        </div>
+
+        <div className="login-field">
+          <label>Username</label>
+          <input value={username} onChange={e => setUsername(e.target.value)}
+                 placeholder="Enter username" onKeyDown={e => e.key==="Enter" && handleSubmit()} />
+        </div>
+        <div className="login-field">
+          <label>Password</label>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                 placeholder="Enter password" onKeyDown={e => e.key==="Enter" && handleSubmit()} />
+        </div>
+        {tab === "register" && <>
+          <div className="login-field">
+            <label>Confirm Password</label>
+            <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Re-enter password" />
+          </div>
+          <div className="login-field">
+            <label>Daily study hours (e.g. 4)</label>
+            <input value={hours} onChange={e => setHours(e.target.value)} placeholder="4" />
+          </div>
+        </>}
+
+        <div className={error ? "error-msg" : "success-msg"}>{error || success || " "}</div>
+
+        <button className="btn btn-primary" style={{width:"100%",padding:"11px"}}
+                onClick={handleSubmit} disabled={loading}>
+          {loading ? "Please wait..." : tab === "login" ? "Login" : "Create Account"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
+// MAIN APP (after login)
+// ═════════════════════════════════════════════════════════════════
+function MainApp({ token, username, onLogout }) {
+  const [page, setPage] = useState("dashboard");
+
+  const pages = [
+    { id: "dashboard", label: "🏠  Dashboard" },
+    { id: "subjects",  label: "📖  Subjects"  },
+    { id: "schedule",  label: "🗓️  Schedule"  },
+    { id: "progress",  label: "📊  Progress"  },
+  ];
+
+  return (
+    <div className="app">
+      {/* Sidebar */}
+      <div className="sidebar">
+        <div className="sidebar-logo">
+          <div className="icon">📚</div>
+          <div className="title">Study Planner</div>
+          <div className="user">@{username}</div>
+        </div>
+        <div className="sidebar-divider" />
+        {pages.map(p => (
+          <button key={p.id} className={`nav-btn ${page===p.id?"active":""}`}
+                  onClick={() => setPage(p.id)}>{p.label}</button>
+        ))}
+        <div className="sidebar-bottom">
+          <button className="logout-btn" onClick={onLogout}>⬅ Logout</button>
+        </div>
+      </div>
+
+      {/* Page content */}
+      <div className="content">
+        {page === "dashboard" && <Dashboard token={token} username={username} />}
+        {page === "subjects"  && <Subjects  token={token} />}
+        {page === "schedule"  && <Schedule  token={token} />}
+        {page === "progress"  && <Progress  token={token} />}
+      </div>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
+// DASHBOARD PAGE
+// ═════════════════════════════════════════════════════════════════
+function Dashboard({ token, username }) {
+  const [subjects, setSubjects] = useState([]);
+  const [schedule, setSchedule] = useState([]);
+
+  useEffect(() => {
+    api("/subjects", "GET", null, token).then(setSubjects).catch(()=>{});
+    api("/schedule", "GET", null, token).then(setSchedule).catch(()=>{});
+  }, []);
+
+  const today      = new Date().toISOString().split("T")[0];
+  const todaySess  = schedule.filter(s => s.date === today && s.status === "scheduled");
+  const completed  = schedule.filter(s => s.status === "completed").length;
+  const missed     = schedule.filter(s => s.status === "missed").length;
+  const upcoming   = schedule.filter(s => s.status === "scheduled").length;
+
+  function daysLeft(deadline) {
+    const diff = Math.ceil((new Date(deadline) - new Date()) / 86400000);
+    return diff;
+  }
+
+  const dateStr = new Date().toLocaleDateString("en-AU", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+
+  return (
+    <div>
+      <div className="page-title">Welcome back, {username} 👋</div>
+      <div className="page-sub">{dateStr}</div>
+
+      {/* Stats */}
+      <div className="stats-row">
+        <div className="stat-card">
+          <div className="stat-val" style={{color:"#00b4d8"}}>{subjects.length}</div>
+          <div className="stat-label">Subjects</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-val" style={{color:"#2ecc71"}}>{upcoming}</div>
+          <div className="stat-label">Upcoming Sessions</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-val" style={{color:"#f39c12"}}>{completed}</div>
+          <div className="stat-label">Completed</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-val" style={{color:"#e74c3c"}}>{missed}</div>
+          <div className="stat-label">Missed</div>
+        </div>
+      </div>
+
+      <div style={{display:"flex", gap:20}}>
+        {/* Today's sessions */}
+        <div className="card" style={{flex:1}}>
+          <div className="card-title">Today's Sessions</div>
+          {todaySess.length === 0
+            ? <div className="empty"><div className="empty-icon">📅</div>No sessions today.<br/>Go to Subjects → Generate Schedule.</div>
+            : todaySess.map(s => (
+              <div key={s.id} style={{display:"flex",alignItems:"center",padding:"10px 0",borderBottom:"1px solid #2a3f55"}}>
+                <span className="dot" style={{background:subjectColor(s.subject)}}/>
+                <span style={{color:"#00b4d8",fontWeight:600,width:60}}>{s.time}</span>
+                <span>{s.subject}</span>
+                <span style={{marginLeft:"auto",color:"#8fa8c0",fontSize:12}}>{s.duration}h</span>
+              </div>
+            ))
+          }
+        </div>
+
+        {/* Upcoming deadlines */}
+        <div className="card" style={{width:280}}>
+          <div className="card-title">Upcoming Deadlines</div>
+          {subjects.length === 0
+            ? <div className="empty"><div className="empty-icon">📋</div>No subjects yet.</div>
+            : [...subjects].sort((a,b) => new Date(a.deadline)-new Date(b.deadline)).map(s => {
+              const d = daysLeft(s.deadline);
+              const cls = d <= 3 ? "urgent" : d <= 7 ? "soon" : "ok";
+              return (
+                <div key={s.name} style={{display:"flex",alignItems:"center",padding:"9px 0",borderBottom:"1px solid #2a3f55"}}>
+                  <span className="dot" style={{background:subjectColor(s.name)}}/>
+                  <span style={{flex:1,fontSize:13}}>{s.name}</span>
+                  <span className={cls} style={{fontSize:12,fontWeight:600}}>
+                    {d < 0 ? "Overdue!" : d === 0 ? "Due today!" : `${d}d left`}
+                  </span>
+                </div>
+              );
+            })
+          }
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
+// SUBJECTS PAGE (FR-05)
+// ═════════════════════════════════════════════════════════════════
+function Subjects({ token }) {
+  const [subjects, setSubjects] = useState([]);
+  const [name,     setName]     = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [priority, setPriority] = useState("Medium");
+  const [hours,    setHours]    = useState("3");
+  const [error,    setError]    = useState("");
+  const [msg,      setMsg]      = useState("");
+
+  useEffect(() => {
+    api("/subjects", "GET", null, token).then(setSubjects).catch(()=>{});
+  }, []);
+
+  async function addSubject() {
+    setError(""); setMsg("");
+    if (!name.trim() || !deadline) { setError("Subject name and deadline are required."); return; }
+    try {
+      const data = await api("/subjects", "POST", { name, deadline, priority, hours }, token);
+      setSubjects(data.subjects);
+      setName(""); setDeadline(""); setHours("3"); setPriority("Medium");
+      setMsg("✓ Subject added!");
+      setTimeout(() => setMsg(""), 3000);
+    } catch (e) { setError(e.message); }
+  }
+
+  async function deleteSubject(subjectName) {
+    try {
+      const data = await api(`/subjects/${encodeURIComponent(subjectName)}`, "DELETE", null, token);
+      setSubjects(data.subjects);
+    } catch (e) { setError(e.message); }
+  }
+
+  async function generateSchedule() {
+    setError(""); setMsg("");
+    try {
+      const data = await api("/schedule/generate", "POST", null, token);
+      setMsg(`✓ ${data.message}`);
+      setTimeout(() => setMsg(""), 5000);
+    } catch (e) { setError(e.message); }
+  }
+
+  return (
+    <div>
+      <div className="page-title">Subjects & Deadlines</div>
+      <div className="page-sub">Add your subjects, then generate your AI-powered study schedule.</div>
+
+      {/* Add subject form */}
+      <div className="card">
+        <div className="card-title">Add New Subject</div>
+        <div className="form-row">
+          <div className="form-group">
+            <label>Subject Name</label>
+            <input value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. ITS205" style={{width:180}} />
+          </div>
+          <div className="form-group">
+            <label>Deadline (YYYY-MM-DD)</label>
+            <input type="date" value={deadline} onChange={e=>setDeadline(e.target.value)} style={{width:170}} />
+          </div>
+          <div className="form-group">
+            <label>Priority</label>
+            <select value={priority} onChange={e=>setPriority(e.target.value)} style={{width:120}}>
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Est. Hours</label>
+            <input value={hours} onChange={e=>setHours(e.target.value)} placeholder="3" style={{width:80}} />
+          </div>
+          <button className="btn btn-primary" onClick={addSubject}>Add Subject</button>
+          <button className="btn btn-success" onClick={generateSchedule} style={{marginLeft:8}}>
+            ⚡ Generate AI Schedule (FR-06)
+          </button>
+        </div>
+        {error && <div style={{color:"#e74c3c",fontSize:13,marginTop:8}}>{error}</div>}
+        {msg   && <div style={{color:"#2ecc71",fontSize:13,marginTop:8}}>{msg}</div>}
+      </div>
+
+      {/* Subject list */}
+      <div className="card">
+        <div className="card-title">Your Subjects ({subjects.length})</div>
+        {subjects.length === 0
+          ? <div className="empty"><div className="empty-icon">📚</div>No subjects yet. Add one above.</div>
+          : <table>
+              <thead>
+                <tr><th>Subject</th><th>Deadline</th><th>Priority</th><th>Est. Hours</th><th></th></tr>
+              </thead>
+              <tbody>
+                {subjects.map(s => (
+                  <tr key={s.name}>
+                    <td><span className="dot" style={{background:subjectColor(s.name)}}/>{s.name}</td>
+                    <td>{s.deadline}</td>
+                    <td>
+                      <span style={{color: s.priority==="High"?"#e74c3c": s.priority==="Medium"?"#f39c12":"#2ecc71", fontWeight:600}}>
+                        {s.priority}
+                      </span>
+                    </td>
+                    <td>{s.hours}h</td>
+                    <td>
+                      <button className="btn btn-danger btn-sm" onClick={() => deleteSubject(s.name)}>Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+        }
+      </div>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
+// SCHEDULE PAGE (FR-06, FR-08)
+// ═════════════════════════════════════════════════════════════════
+function Schedule({ token }) {
+  const [schedule,  setSchedule]  = useState([]);
+  const [selected,  setSelected]  = useState(null);
+  const [notif,     setNotif]     = useState(null); // { msg, type }
+
+  useEffect(() => {
+    api("/schedule", "GET", null, token).then(setSchedule).catch(()=>{});
+  }, []);
+
+  function showNotif(msg, type) {
+    setNotif({ msg, type });
+    setTimeout(() => setNotif(null), 6000);
+  }
+
+  async function markComplete() {
+    if (!selected) { showNotif("Please click a session to select it first.", "info"); return; }
+    try {
+      const data = await api(`/schedule/complete/${encodeURIComponent(selected)}`, "POST", null, token);
+      setSchedule(data.schedule);
+      setSelected(null);
+      showNotif("✅ Session marked as complete!", "success");
+    } catch (e) { showNotif(e.message, "danger"); }
+  }
+
+  async function markMissed() {
+    if (!selected) { showNotif("Please click a session to select it first.", "info"); return; }
+    try {
+      // FR-08: Adaptive rescheduling
+      const data = await api(`/schedule/missed/${encodeURIComponent(selected)}`, "POST", null, token);
+      setSchedule(data.schedule);
+      setSelected(null);
+      showNotif(`⚠ Session missed! "${data.missedSubject}" has been re-prioritised and your schedule has been regenerated. (FR-08: Adaptive Rescheduling)`, "danger");
+    } catch (e) { showNotif(e.message, "danger"); }
+  }
+
+  return (
+    <div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+        <div className="page-title">Study Schedule</div>
+        <div style={{display:"flex",gap:10}}>
+          <button className="btn btn-success" onClick={markComplete}>✅ Mark Complete</button>
+          <button className="btn btn-danger"  onClick={markMissed}>❌ Mark Missed (FR-08)</button>
+        </div>
+      </div>
+      <div className="page-sub">Click a session to select it, then mark it complete or missed.</div>
+
+      {notif && (
+        <div className={`notif notif-${notif.type}`}>
+          <span>{notif.msg}</span>
+        </div>
+      )}
+
+      {schedule.length === 0
+        ? <div className="empty" style={{marginTop:60}}>
+            <div className="empty-icon">🗓️</div>
+            No schedule yet.<br/>Go to Subjects and click ⚡ Generate AI Schedule.
+          </div>
+        : <div className="card" style={{padding:0,overflow:"hidden"}}>
+            <table>
+              <thead>
+                <tr><th>Date</th><th>Time</th><th>Subject</th><th>Duration</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                {schedule.map(s => (
+                  <tr key={s.id}
+                      className={selected === s.id ? "selected" : ""}
+                      onClick={() => setSelected(s.id)}
+                      style={{cursor:"pointer"}}>
+                    <td>{s.date}</td>
+                    <td>{s.time}</td>
+                    <td><span className="dot" style={{background:subjectColor(s.subject)}}/>{s.subject}</td>
+                    <td>{s.duration}h</td>
+                    <td>
+                      <span className={`badge badge-${s.status}`}>
+                        {s.status === "scheduled" ? "🕐 Scheduled"
+                          : s.status === "completed" ? "✅ Completed"
+                          : "❌ Missed"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+      }
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
+// PROGRESS PAGE (FR-10)
+// ═════════════════════════════════════════════════════════════════
+function Progress({ token }) {
+  const [schedule, setSchedule] = useState([]);
+
+  useEffect(() => {
+    api("/schedule", "GET", null, token).then(setSchedule).catch(()=>{});
+  }, []);
+
+  const total     = schedule.length;
+  const completed = schedule.filter(s => s.status === "completed").length;
+  const missed    = schedule.filter(s => s.status === "missed").length;
+  const upcoming  = schedule.filter(s => s.status === "scheduled").length;
+  const pct       = total ? Math.round(completed / total * 100) : 0;
+
+  // Per-subject stats
+  const subjectStats = {};
+  schedule.forEach(s => {
+    if (!subjectStats[s.subject]) subjectStats[s.subject] = { completed:0, missed:0, scheduled:0 };
+    subjectStats[s.subject][s.status]++;
+  });
+
+  return (
+    <div>
+      <div className="page-title">Progress & Analytics</div>
+      <div className="page-sub">Track your study completion and productivity.</div>
+
+      {/* Stats */}
+      <div className="stats-row">
+        <div className="stat-card">
+          <div className="stat-val" style={{color:"#00b4d8"}}>{pct}%</div>
+          <div className="stat-label">Completion Rate</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-val" style={{color:"#2ecc71"}}>{completed}h</div>
+          <div className="stat-label">Hours Studied</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-val" style={{color:"#e74c3c"}}>{missed}</div>
+          <div className="stat-label">Missed Sessions</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-val" style={{color:"#f39c12"}}>{upcoming}</div>
+          <div className="stat-label">Sessions Remaining</div>
+        </div>
+      </div>
+
+      {/* Subject breakdown */}
+      <div className="card">
+        <div className="card-title">Subject Breakdown</div>
+        {Object.keys(subjectStats).length === 0
+          ? <div className="empty"><div className="empty-icon">📊</div>No data yet. Generate a schedule and mark some sessions.</div>
+          : Object.entries(subjectStats).map(([name, stats]) => {
+              const tot  = stats.completed + stats.missed + stats.scheduled;
+              const p    = tot ? Math.round(stats.completed / tot * 100) : 0;
+              const col  = subjectColor(name);
+              return (
+                <div key={name} style={{marginBottom:18}}>
+                  <div style={{display:"flex",alignItems:"center",marginBottom:6,gap:10}}>
+                    <span className="dot" style={{background:col}}/>
+                    <span style={{fontWeight:600,flex:1}}>{name}</span>
+                    <span style={{fontSize:12,color:"#8fa8c0"}}>
+                      ✅ {stats.completed}  ❌ {stats.missed}  🕐 {stats.scheduled}
+                    </span>
+                    <span style={{fontWeight:700,color:col,width:42,textAlign:"right"}}>{p}%</span>
+                  </div>
+                  <div className="progress-bar-outer">
+                    <div className="progress-bar-inner" style={{width:`${p}%`, background:col}}/>
+                  </div>
+                </div>
+              );
+            })
+        }
+      </div>
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════
+// ROOT — manages login state
+// ═════════════════════════════════════════════════════════════════
+function App() {
+  const [token,    setToken]    = useState(localStorage.getItem("sp_token") || null);
+  const [username, setUsername] = useState(localStorage.getItem("sp_user")  || null);
+
+  function handleLogin(tok, user) {
+    localStorage.setItem("sp_token", tok);
+    localStorage.setItem("sp_user",  user);
+    setToken(tok); setUsername(user);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("sp_token");
+    localStorage.removeItem("sp_user");
+    setToken(null); setUsername(null);
+  }
+
+  if (!token) return <LoginPage onLogin={handleLogin} />;
+  return <MainApp token={token} username={username} onLogout={handleLogout} />;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
