@@ -21,7 +21,11 @@ const PORT   = 5000;
 const SECRET = "its205_group9_secret_key"; // JWT secret key
 
 // ── Middleware ────────────────────────────────────────────────────
-app.use(cors());                    // allow frontend to talk to backend
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));                   // allow frontend to talk to backend
 app.use(express.json());            // read JSON from requests
 
 // ── Simple file-based database ────────────────────────────────────
